@@ -20,11 +20,14 @@ const InstrumentedPromise = function Promise(resolver) {
       });
       return reject(arg);
     }));
+  // 确保调用链先走 pollyfill 定义的 then 方法
   promise.__proto__ = InstrumentedPromise.prototype;
   return promise;
 };
 
+// 确保使用者能直接调用原生 Promise 方法
 InstrumentedPromise.__proto__ = OriginalPromise;
+// 确保 InstrumentedPromise 内部函数能调用到原生 Promise 方法
 InstrumentedPromise.prototype.__proto__ = OriginalPromise.prototype;
 
 InstrumentedPromise.prototype.then = function then(onFulfilled, onRejected) {
